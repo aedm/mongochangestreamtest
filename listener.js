@@ -19,7 +19,7 @@ class Listener {
       cursor.forEach(doc => {
         this.receivedCount++;
         onReceived(1);
-        this.sumDelay = Date.now() - doc.fullDocument.created;
+        this.sumDelay += Date.now() - doc.fullDocument.created;
       });
       return cursor;
     });

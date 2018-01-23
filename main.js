@@ -6,8 +6,8 @@ const URL = 'mongodb://localhost:27017';
 const DB_NAME = 'streamtest';
 const APP_NAME = "StreamTest";
 
-const CLIENT_COUNT = 100;
-const ROOM_COUNT = 100;
+const CLIENT_COUNT = 10;
+const ROOM_COUNT = 20;
 const JOIN_COUNT = 10;
 
 let mongoConnection = null;

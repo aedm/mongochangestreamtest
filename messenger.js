@@ -1,7 +1,7 @@
 const Chance = require('chance');
 
 const SENDS_PER_SECOND = 10;
-const SEND_BATCH = 1;
+const SEND_BATCH = 10;
 
 class Messenger {
   constructor(collection, roomCount) {
