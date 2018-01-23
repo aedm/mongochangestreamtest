@@ -1,0 +1,16 @@
+{
+  "name": "mongo_streams",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.17.1",
+    "chance": "^1.0.13",
+    "mongodb": "^3.0.1"
+  }
+}
