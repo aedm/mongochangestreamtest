@@ -6,9 +6,9 @@ const URL = 'mongodb://localhost:27017';
 const DB_NAME = 'streamtest';
 const APP_NAME = "StreamTest";
 
-const CLIENT_COUNT = 10;
-const ROOM_COUNT = 20;
-const JOIN_COUNT = 10;
+const CLIENT_COUNT = 1;
+const ROOM_COUNT = 50;
+const JOIN_COUNT = 50;
 
 let mongoConnection = null;
 let listeners = [];
@@ -35,7 +35,7 @@ async function main() {
   // await db.collection("hello").insertOne({x: 1});
 
   // Create clients
-  let chatCollection = db.collection("chat", () => {});
+  let chatCollection = db.collection("chat");
   for (let i = 0; i < CLIENT_COUNT; i++) {
     let listener = new Listener(chatCollection, i, ROOM_COUNT, JOIN_COUNT, (x) => {messageCount += x;});
     listeners.push(listener);
@@ -45,26 +45,11 @@ async function main() {
   let messenger = new Messenger(chatCollection, ROOM_COUNT);
 
   // Setup triggers
-  db.collection("control", () => {}).aggregate([
-    {$changeStream: {}},
-  ]).forEach(change => {
-    switch (change.fullDocument.message) {
-      case "quit":
-        quit();
-        break;
-      case "start":
-        messenger.start();
-        break;
-      case "stop":
-        messenger.stop();
-        break;
-    }
+  db.collection("control").watch([
+    {$match: {}},
+  ]).stream().on("data", () => {
+    messenger.trigger();
   });
-
-  // db.collection("ping").aggregate([
-  //   {$changeStream: {}},
-  //   {$match: {"fullDocument.x": "a"}},
-  // ]).forEach(console.log);
 
   setInterval(stat, 1000);
   console.log("Clients created.");

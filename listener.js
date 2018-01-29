@@ -6,20 +6,22 @@ class Listener {
     this.chance = new Chance();
     this.receivedCount = 0;
     this.sumDelay = 0;
+    this.largestDelay = 0;
 
     // Generate list of rooms to subscribe to
     let rooms = this.generateRoomsToJoin(roomCount, joinCount);
     console.log(`Client ${clientId} joining rooms: ${rooms}`);
 
     this.cursors = rooms.map(roomId => {
-      let cursor = collection.aggregate([
-        {$changeStream: {}},
+      let cursor = collection.watch([
         {$match: {"fullDocument.room": roomId}},
       ]);
-      cursor.forEach(doc => {
+      cursor.stream().on("data", doc => {
         this.receivedCount++;
         onReceived(1);
-        this.sumDelay += Date.now() - doc.fullDocument.created;
+        let delay = Date.now() - doc.fullDocument.created;
+        this.sumDelay += delay;
+        if (this.largestDelay < delay) this.largestDelay = delay;
       });
       return cursor;
     });
@@ -29,6 +31,7 @@ class Listener {
     this.cursors.forEach(cursor => cursor.close());
     console.log("Received count:", this.receivedCount);
     console.log("Average delay (ms):", this.sumDelay / this.receivedCount);
+    console.log("Largest delay (ms):", this.largestDelay);
   }
 
   generateRoomsToJoin(roomCount, joinCount) {

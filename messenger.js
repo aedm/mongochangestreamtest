@@ -10,6 +10,13 @@ class Messenger {
     this.interval = null;
     this.chance = new Chance();
     this.statInterval = null;
+    this.isStarted = false;
+  }
+
+  trigger() {
+    if (!this.isStarted) this.start();
+    else this.stop();
+    this.isStarted = !this.isStarted;
   }
 
   start() {
@@ -30,7 +37,6 @@ class Messenger {
     this.statInterval = null;
 
     console.log("Stopped.");
-    console.log("Avg messages/sec:", this.sentCount / elapsed * 1000);
   }
 
   send() {
